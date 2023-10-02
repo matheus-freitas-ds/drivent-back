@@ -5,6 +5,9 @@ import { cleanDb, generateValidToken } from "../helpers";
 import app, { init } from "@/app";
 import { createEnrollmentWithAddress, createTicket, createTicketTypeWithHotel, createUser } from "../factories";
 import { createHotel, createRoom } from "../factories/hotels-factory";
+import * as jwt from 'jsonwebtoken';
+import faker from "@faker-js/faker";
+
 
 beforeAll(async () => {
     await init();
@@ -22,6 +25,23 @@ describe('GET /hotels', () => {
 
         expect(response.status).toBe(httpStatus.UNAUTHORIZED);
     });
+
+    it('should respond with status 401 if given token is not valid', async () => {
+        const token = faker.lorem.word();
+    
+        const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
+    
+        expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+      });
+    
+      it('should respond with status 401 if there is no session for given token', async () => {
+        const userWithoutSession = await createUser();
+        const token = jwt.sign({ userId: userWithoutSession.id }, process.env.JWT_SECRET);
+    
+        const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
+    
+        expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+      });    
 
     describe('when token is valid', () => {
         it('should respond with status 404 when there is no enrollment', async () => {
@@ -128,6 +148,23 @@ describe('GET /hotels/:hotelId', () => {
 
         expect(response.status).toBe(httpStatus.UNAUTHORIZED);
     });
+
+    it('should respond with status 401 if given token is not valid', async () => {
+        const token = faker.lorem.word();
+    
+        const response = await server.get('/hotels/1').set('Authorization', `Bearer ${token}`);
+    
+        expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+      });
+    
+      it('should respond with status 401 if there is no session for given token', async () => {
+        const userWithoutSession = await createUser();
+        const token = jwt.sign({ userId: userWithoutSession.id }, process.env.JWT_SECRET);
+    
+        const response = await server.get('/hotels/1').set('Authorization', `Bearer ${token}`);
+    
+        expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+      });  
 
     describe('when token is valid', () => {
         it('should respond with status 404 when there is no enrollment', async () => {
