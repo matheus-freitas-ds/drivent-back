@@ -20,6 +20,24 @@ async function getHotels(userId: number) {
     return hotels
 }
 
+async function getHotelRooms(hotelId: number, userId: number) {
+
+    const ticketEnrollment = await enrollmentRepository.ticketValidation(userId)
+
+    if (!ticketEnrollment || !ticketEnrollment.Ticket) throw notFoundError()
+
+    if (ticketEnrollment.Ticket.status !== 'PAID') throw paymentNotFoundError()
+
+    if (!ticketEnrollment.Ticket.TicketType.includesHotel || ticketEnrollment.Ticket.TicketType.isRemote) throw paymentNotFoundError()
+
+    const hotelRooms = await hotelsRepository.getHotelRoomsList(hotelId)
+
+    if (!hotelRooms) throw notFoundError()
+
+    return hotelRooms
+}
+
 export const hotelsService = {
-    getHotels
+    getHotels,
+    getHotelRooms
 }
