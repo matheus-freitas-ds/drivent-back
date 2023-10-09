@@ -2,6 +2,7 @@ import { notFoundError } from '@/errors';
 import { forbiddenError } from '@/errors/forbidden-error';
 import { enrollmentRepository, ticketsRepository } from '@/repositories';
 import { bookingRepository } from '@/repositories/booking-repository';
+import { TicketStatus } from '@prisma/client';
 
 async function getBooking(userId: number) {
     const booking = await bookingRepository.findBooking(userId)
@@ -17,7 +18,7 @@ async function createBooking(userId: number, roomId: number) {
 
     const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id)
     if (!ticket) throw notFoundError()
-    if (ticket.TicketType.isRemote || !ticket.TicketType.includesHotel || ticket.status === 'RESERVED') throw forbiddenError()
+    if (ticket.TicketType.isRemote || !ticket.TicketType.includesHotel || ticket.status === TicketStatus.RESERVED) throw forbiddenError()
 
     const room = await bookingRepository.getRoomById(roomId)
     if (!room) throw notFoundError()
