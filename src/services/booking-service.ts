@@ -21,8 +21,19 @@ async function createBooking(userId: number, roomId: number) {
     return { bookingId: booking.id }
 }
 
-async function updateBooking(bookingId: number) {
+async function updateBooking(bookingId: number, roomId: number, userId: number) {
+    const room = await bookingRepository.getRoomById(roomId)
+    if (!room) throw notFoundError()
 
+    const booking = await bookingRepository.findBooking(userId)
+    if (!booking) throw notFoundError()
+
+    const bookingsCount = await bookingRepository.countBookingsByRoomId(room.id)
+    if (bookingsCount >= room.capacity) throw forbiddenError()
+
+    const updatedBooking = await bookingRepository.update(userId, bookingId)
+
+    return { bookingId: updatedBooking.id }
 }
 
 async function validateCreateBooking(userId: number) {
@@ -41,8 +52,8 @@ async function validateAvailableRoomCapacity(roomId: number) {
     const room = await bookingRepository.getRoomById(roomId)
     if (!room) throw notFoundError()
     
-    const bookingsCount = await bookingRepository.countBookingsByRoomId(roomId)
-    if (bookingsCount === room.capacity) throw forbiddenError()
+    const bookingsCount = await bookingRepository.countBookingsByRoomId(room.id)
+    if (bookingsCount >= room.capacity) throw forbiddenError()
 
 }
 

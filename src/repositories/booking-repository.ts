@@ -39,9 +39,22 @@ async function countBookingsByRoomId(roomId: number) {
     })
 }
 
+async function update (roomId: number, bookingId: number) {
+    return await prisma.booking.update({
+        where: {
+            id: bookingId
+        },
+        data: {
+            roomId,
+            updatedAt: new Date()
+        }
+    })
+}
+
 export const bookingRepository = {
     findBooking,
     create,
     getRoomById,
-    countBookingsByRoomId
+    countBookingsByRoomId,
+    update
 };
