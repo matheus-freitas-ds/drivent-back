@@ -6,6 +6,7 @@ import { prisma } from '@/config';
 
 export async function cleanDb() {
   await prisma.address.deleteMany({});
+  await prisma.booking.deleteMany({});
   await prisma.payment.deleteMany({});
   await prisma.ticket.deleteMany({});
   await prisma.ticketType.deleteMany({});
