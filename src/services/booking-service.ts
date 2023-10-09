@@ -61,6 +61,10 @@ export type CreateBookingSchema = {
     roomId: number
 }
 
+export type CreateBookingParamsSchema = {
+    bookingId: number
+}
+
 export const bookingService = {
     getBooking,
     createBooking,
