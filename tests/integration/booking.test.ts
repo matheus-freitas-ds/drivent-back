@@ -281,7 +281,7 @@ describe('GET /booking', () => {
         expect(response.status).toBe(httpStatus.FORBIDDEN);
       });
     
-      it('should respond with status 403 if new room capacity is exceeded', async () => {
+      it('should respond with status 403 if the new room is full', async () => {
         const user = await createUser();
         const token = await generateValidToken(user);
         const hotel = await createHotel();
@@ -290,12 +290,12 @@ describe('GET /booking', () => {
         const booking = await createBooking(user.id, randomRoom.id);
   
         const body = { roomId: room.id };
-        const response = await server.put('/booking/1').set('Authorization', `Bearer ${token}`).send(body);
+        const response = await server.put(`/booking/${booking.id}`).set('Authorization', `Bearer ${token}`).send(body);
   
         expect(response.status).toBe(httpStatus.FORBIDDEN);
       });
   
-      it('should respond with status 200 and returns bookingId', async () => {
+      it('should respond with status 200 with bookingId data', async () => {
         const user = await createUser();
         const token = await generateValidToken(user);
         const hotel = await createHotel();
@@ -304,7 +304,7 @@ describe('GET /booking', () => {
         const booking = await createBooking(user.id, randomRoom.id);
   
         const body = { roomId: room.id };
-        const response = await server.put('/booking/1').set('Authorization', `Bearer ${token}`).send(body);
+        const response = await server.put(`/booking/${booking.id}`).set('Authorization', `Bearer ${token}`).send(body);
   
         expect(response.status).toBe(httpStatus.OK);
         expect(response.body).toEqual(
