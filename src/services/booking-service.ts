@@ -26,7 +26,7 @@ async function updateBooking(bookingId: number, roomId: number, userId: number) 
     if (!room) throw notFoundError()
 
     const booking = await bookingRepository.findBooking(userId)
-    if (!booking) throw notFoundError()
+    if (!booking) throw forbiddenError()
 
     const bookingsCount = await bookingRepository.countBookingsByRoomId(room.id)
     if (bookingsCount >= room.capacity) throw forbiddenError()
