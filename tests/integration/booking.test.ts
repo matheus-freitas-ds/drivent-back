@@ -9,8 +9,8 @@ import {
   createEnrollmentWithAddress,
   createTicket,
   createHotel,
-  createRoomWithHotelId,
   createBooking,
+  createRoomWithHotelId,
 } from '../factories';
 import { cleanDb, generateValidToken } from '../helpers';
 import app, { init } from '@/app';
