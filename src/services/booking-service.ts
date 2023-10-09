@@ -6,14 +6,16 @@ import { bookingRepository } from '@/repositories/booking-repository';
 async function getBooking(userId: number) {
     const booking = bookingRepository.findBooking(userId)
 
-    if (!booking) throw notFoundError()
+    if (booking === null) throw notFoundError()
 
     return booking;
 }
 
 async function createBooking(userId: number, roomId: number) {
     const ticket = await ticketsRepository.findTicketByUserId(userId)
-    if (ticket.TicketType.isRemote || ticket.TicketType.includesHotel == false || ticket.status !== 'PAID') throw forbiddenError()
+    if (ticket.TicketType.isRemote) throw forbiddenError()
+    if (ticket.TicketType.includesHotel === false ) throw forbiddenError()
+    if (ticket.status !== 'PAID') throw forbiddenError()
 
     const room = await bookingRepository.getRoomById(roomId)
     if (!room) throw notFoundError()
@@ -21,7 +23,11 @@ async function createBooking(userId: number, roomId: number) {
 
     const booking = await bookingRepository.create(userId, roomId)
 
-    return { bookingId: booking.roomId }
+    return { bookingId: booking.id }
+}
+
+async function updateBooking(bookingId: number) {
+
 }
 
 export type CreateBookingSchema = {
@@ -30,5 +36,6 @@ export type CreateBookingSchema = {
 
 export const bookingService = {
     getBooking,
-    createBooking
+    createBooking,
+    updateBooking
 };
