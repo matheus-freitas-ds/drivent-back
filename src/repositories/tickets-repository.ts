@@ -47,10 +47,26 @@ async function ticketProcessPayment(ticketId: number) {
   return result;
 }
 
+async function findTicketByUserId(userId: number) {
+  const result = await prisma.ticket.findFirst({
+    where: {
+      Enrollment: {
+        userId
+      }
+    },
+    include: {
+      TicketType: true
+    }
+  })
+
+  return result
+}
+
 export const ticketsRepository = {
   findTicketTypes,
   findTicketByEnrollmentId,
   createTicket,
   findTicketById,
   ticketProcessPayment,
+  findTicketByUserId
 };
