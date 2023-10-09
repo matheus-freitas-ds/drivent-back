@@ -25,7 +25,7 @@ export async function updateBooking(req: AuthenticatedRequest, res: Response) {
     const { roomId } = req.body as CreateBookingSchema
     const { userId } = req
 
-    const updateBookingInfo = await bookingService.updateBooking(roomId, userId, Number(bookingId))
+    const updateBookingInfo = await bookingService.updateBooking(roomId, userId)
 
     res.status(httpStatus.OK).send(updateBookingInfo);
 }

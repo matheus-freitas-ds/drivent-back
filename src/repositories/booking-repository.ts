@@ -32,7 +32,7 @@ async function getRoomWithBookingById(roomId: number) {
 }
 
 async function getRoomById(roomId: number) {
-    return await prisma.room.findFirst({
+    return await prisma.room.findUnique({
         where: {
             id: roomId
         }
