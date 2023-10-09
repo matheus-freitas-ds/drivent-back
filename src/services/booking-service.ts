@@ -22,8 +22,12 @@ async function createBooking(userId: number, roomId: number) {
 }
 
 async function updateBooking(bookingId: number, roomId: number, userId: number) {
-    await validateAvailableRoomCapacity(roomId)
-    
+    const room = await bookingRepository.getRoomById(roomId)
+    if (!room) throw notFoundError()
+
+    const bookingsCount = await bookingRepository.countBookingsByRoomId(room.id)
+    if (bookingsCount >= room.capacity) throw forbiddenError()
+
     const booking = await bookingRepository.findBooking(userId)
     if (!booking) throw forbiddenError()
 
@@ -45,7 +49,7 @@ async function validateCreateBooking(userId: number) {
 }
 
 async function validateAvailableRoomCapacity(roomId: number) {
-    const room = await bookingRepository.getRoomById(roomId)
+    const room = await bookingRepository.getRoomWithBookingById(roomId)
     if (!room) throw notFoundError()
     
     const bookingsCount = await bookingRepository.countBookingsByRoomId(room.id)
