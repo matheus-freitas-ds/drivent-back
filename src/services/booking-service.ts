@@ -17,15 +17,13 @@ async function createBooking(userId: number, roomId: number) {
 
     const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id)
     if (!ticket) throw notFoundError()
-    if (ticket.TicketType.isRemote) throw forbiddenError()
-    if (!ticket.TicketType.includesHotel) throw forbiddenError()
-    if (ticket.status !== 'PAID') throw forbiddenError()
+    if (ticket.TicketType.isRemote || !ticket.TicketType.includesHotel || ticket.status === 'RESERVED') throw forbiddenError()
 
     const room = await bookingRepository.getRoomById(roomId)
     if (!room) throw notFoundError()
 
     const bookingsCounter = await bookingRepository.countBookingsByRoomId(roomId)
-    if (bookingsCounter >= room.capacity) throw forbiddenError()
+    if (bookingsCounter === room.capacity) throw forbiddenError()
 
     const booking = await bookingRepository.create(userId, roomId)
 
