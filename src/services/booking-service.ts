@@ -9,7 +9,7 @@ async function getBooking(userId: number) {
 
     if (!booking) throw notFoundError()
 
-    return booking;
+    return { id: booking.id, Room: booking.Room };
 }
 
 async function createBooking(userId: number, roomId: number) {
